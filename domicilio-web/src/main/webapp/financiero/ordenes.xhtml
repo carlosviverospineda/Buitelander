@@ -1,0 +1,157 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui"
+                xmlns:b="http://bootsfaces.net/ui"
+                xmlns:pe="http://primefaces.org/ui/extensions" >
+    <ui:define name="bodyJR">
+        <center>
+            <h:form id="frmOrdenes">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{ordenBean.modulo.descripcion}">#{ordenBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{ordenBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{ordenBean.refrescar()}" icon="ui-icon-refresh"/>
+                        <p:commandButton rendered="#{ordenBean.accionCrear}" title="Crear" actionListener="#{ordenBean.crear()}" icon="ui-icon-document"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable var="obj" value="#{ordenBean.lazyOrden}" paginator="true" rows="#{ordenBean.tamanoPagina}" 
+                             emptyMessage="No se encontraron registros"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" id="tablaRegistros" lazy="true"
+                             widgetVar="tablaWidget"
+                             rowKey="#{obj.id}" reflow="true">
+
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>
+                        <p:commandButton rendered="#{ordenBean.accionAdicional1}" title="Descargar" ajax="true" onclick="PrimeFaces.monitorDownload(start, stop);" icon="ui-icon-document">
+                        </p:commandButton>
+                        <p:commandButton rendered="#{ordenBean.accionVer}" title="Ver" actionListener="#{ordenBean.ver(obj.id)}" icon="ui-icon-search"/>
+                    </p:column>
+                    <p:column headerText="Estado" filterBy="#{obj.estado}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaWidget').filter()" style="width: 88%;" >
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.estadoStr}" title="#{obj.estadoStr}"/>
+                    </p:column>
+
+                    <p:column headerText="Tipo orden" filterBy="#{obj.maeTipoOrden }">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaWidget').filter()" style="width: 88%;" >
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                            </p:selectOneMenu>
+                        </f:facet>        
+                    </p:column>                  
+
+                    <p:column headerText="Valor total" sortBy="#{obj.total}" filterBy="#{obj.total}">
+                        <f:facet name="filter">
+                            <p:inputText label="Valor total" maxlength="128" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.total}"/>
+                    </p:column>
+
+                    <p:column headerText="Elaborada" sortBy="#{obj.aprobo}" filterBy="#{obj.aprobo}">
+                        <f:facet name="filter">
+                            <p:inputText label="Elaborada" maxlength="128" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.aprobo}"/>
+                    </p:column>
+
+                    <p:column headerText="Fecha de la Orden" sortBy="#{obj.fechaOrden}">
+                        <h:outputText value="#{obj.fechaOrden}" title="#{obj.fechaOrden}">
+                            <f:convertDateTime type="date" pattern="yyyy-MM-dd" timeZone="America/Bogota"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column headerText="Fecha de creación" sortBy="#{obj.maeTipoOrden}">
+                        <h:outputText value="#{obj.maeTipoOrden}" title="#{obj.maeTipoOrden}">
+                            <f:convertDateTime type="date" pattern="yyyy-MM-dd HH:mm:ss" timeZone="America/Bogota"/>
+                        </h:outputText>
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true">
+                <p:scrollPanel mode="native" style="height:500px">
+                    <h:form id="frmCrear">
+                        <p:panelGrid  style="width:100%;margin:10px 0px">
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Estado" for="estado"/>
+                                </p:column>
+                                <p:column colspan="5">
+                                    <p:selectOneButton id="estado" value="#{ordenBean.objeto.estado}" required="true">
+                                        <f:selectItems value="#{ordenBean.estados}" />
+                                    </p:selectOneButton>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Tipo Orden" for="tipoOrden"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Fecha Orden" for="fechaOrden"/>
+                                </p:column>
+
+                            </p:row>
+
+                            <p:row>                            
+                                <p:column>
+                                    <p:selectOneMenu id="tipoOrden" label="Tipo Orden" required="true" value="#{ordenBean.objeto.maeTipoOrden}" effect="fold" editable="fase" style="width: 170px;">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{ordenBean.listaMaeTiposOrden}" var="tipoOrd" itemValue="#{tipoOrd.id}" itemLabel="#{tipoOrd.nombre}" itemDescription="#{tipoOrd.descripcion}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:calendar id="fechaOrden" label="Fecha Orden" navigator="true" pattern="yyyy-MM-dd"  value="#{ordenBean.objeto.fechaOrden}" size="7" maxlength="10" required="true">
+                                    </p:calendar>
+                                </p:column>
+
+                                <p:column>
+                                    <p:selectOneMenu id="tipoActa" label="Tipo Acta" required="true" value="#{ordenBean.objeto.maeTipoOrden}" effect="fold" editable="fase" style="width: 170px;">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{ordenBean.listaMaeTiposActa}" var="tipoAct" itemValue="#{tipoAct.id}" itemLabel="#{tipoAct.nombre}" itemDescription="#{tipoAct.descripcion}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column>
+                                    <p:inputText id="numeroActa" label="Número Acta" value="#{ordenBean.objeto.id}" size="16" maxlength="16" required="true">
+                                    </p:inputText>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:row>
+                                    <p:column>
+                                        <p:inputText id="tipoOrden1" label="Tipo orden" value="#{ordenBean.objeto.maeTipoOrden}" size="16" maxlength="16" required="true">
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="numEstado" label="Estado" value="#{ordenBean.objeto.estado}" size="16" maxlength="16" required="true">
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                   <f:facet name="footer">
+                                    <p:row>
+                                        <p:column colspan="4" style="text-align: center">
+                                            <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true"/>
+                                            <p:remoteCommand name="guardarRemote" action ="#{usuarioBean.guardar}" update="panelCrear"/>
+                                            <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" style="margin-left: 5px;"/>
+                                        </p:column>
+                                    </p:row>
+                                </f:facet>
+                            </p:row>
+                        </p:panelGrid>
+                    </h:form>
+                </p:scrollPanel>
+            </p:dialog>
+        </center>
+    </ui:define>
+</ui:composition>

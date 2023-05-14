@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <f:facet name="first">
+            <h:outputStylesheet name="css/default.css"/>
+            <h:outputStylesheet name="css/cssLayout.css"/>
+            <h:outputStylesheet name="css/inicio.css"/>
+            <h:outputStylesheet name="css/sistema.css"/>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link rel="icon" type="image/x-icon" href="/savia/resources/images/icono.png"/>
+            <title>Sistema de información</title>
+        </f:facet>
+    </h:head>
+    <style>
+        .growl {  
+            width: 300px;
+        }
+    </style>
+    <script type="text/javascript">
+        window.onload = function () {
+            document.getElementsByClassName('txtModulo').item(0).value = sessionStorage.getItem('Modulo');
+        }
+    </script>
+    <div id="overlay">
+        <div class="loader">Cargando...</div>
+    </div>
+    <h:body style="background-color: #D4D4D4;">
+        <f:view>
+            <p:layout fullPage="true">
+                <p:layoutUnit position="north" size="40px" resizable="true" closable="true" collapsible="true">
+                    <table style="width: 100%;">
+                        <tr>
+                            <th style="width: 50%;text-align: left;">
+                        <h:graphicImage value="/resources/images/acc_empresa.png" style="height: 50px;" title="Sistema Savia" />
+                        </th>
+                        <th style="text-align: right;">
+                        <h:form id="frmModulo">
+                            <p:inputText id="txtModulo" class="txtModulo" value="#{homeBean.moduloAbierto}" style="visibility: hidden"/>
+                            <p:commandLink onclick="PrimeFaces.monitorDownload();" title="Ayuda" ajax="false" process="@form">
+                            </p:commandLink>
+                        </h:form>                                
+                        </th>
+                        </tr>
+                    </table>
+                </p:layoutUnit>
+                <p:layoutUnit position="west" header="Menú Principal" footer="Ver. #{homeBean.moduloVersion.version} (#{loginBean.moduloVersion.fechaVersion})" collapsible="true" style="width: 192px; font-family: arial; font-size: 12px; ">
+                    <h:form id="frmSelEmpBoton">
+                        <p:growl id="mensajeGeneral" escape="false" showSummary="true" showDetail="true" sticky="false" class="growl">
+                            <p:autoUpdate />
+                        </p:growl>
+                        <p:menu style="width: 192px;">
+                            <p:submenu label="#{sessionScope.conexion.usuario.nombre}">
+                                <p:menuitem>
+                                    <p:selectOneMenu value="#{homeBean.empresa.id}" filter="true" filterMatchMode="contains" required="true" style="width: 160px;" rendered="#{sessionScope.conexion.usuario.empresa.administradora}"> 
+                                        <p:ajax listener="#{homeBean.cambioEmpresa}" />
+                                        <f:selectItem itemLabel="#{sessionScope.conexion.empresa.nombreComercial}" itemValue="#{sessionScope.conexion.empresa.id}" />
+                                        <f:selectItems value="#{homeBean.empresasConFiltro}" var="emp" itemValue="#{emp.id}" itemLabel="#{emp.nombreComercial}" itemDescription="#{emp.nombreComercial} - #{emp.descripcion}"/>
+                                    </p:selectOneMenu>
+                                </p:menuitem>
+                                <p:menuitem>
+                                    <p:commandButton action="#{homeBean.refrescar}" title="Inicio" icon="ui-icon-home" oncomplete="sessionStorage.clear();"/>
+                                    <p:commandButton action="#{homeBean.cambiarContrasena}" title="Cambio Contraseña" icon="ui-icon-locked" />
+                                    <p:commandButton action="#{homeBean.salir}" title="Salir del Sistema" icon="ui-icon-power" oncomplete="sessionStorage.clear();"/>
+                                </p:menuitem>
+                            </p:submenu>
+                        </p:menu>
+                        <p:panelMenu  style="padding-top: 2px;" model="#{sessionScope.conexion.menuModel}"/>
+                    </h:form>
+                </p:layoutUnit>
+                <p:layoutUnit position="center">
+                    <ui:insert name="bodyJR">
+                        <center>
+                            <h:form id="frmDashBoard">
+
+                                <div style="background: url(/savia/resources/images/home.png); background-size:cover; width:100%; height:87vh; background-repeat:no-repeat; background-position:center; overflow-y:hidden;">
+                                    <a title="Savia Salud EPS" href="http://www.saviasaludeps.com/" target="_blank">
+
+                                    </a>
+                                </div>
+                            </h:form>
+                        </center>
+                    </ui:insert>
+                </p:layoutUnit>
+            </p:layout>
+            <script>
+                <!--TODO: add event, xhr, options> -->
+                $(document).on("ajaxStart pfAjaxSend", function () {
+                    $("html").addClass("progress");
+                    $("#overlay").css("display", "block");
+                }).on("ajaxStop pfAjaxComplete", function () {
+                    $("html").removeClass("progress");
+                    $("#overlay").css("display", "none");
+                }).on("ajaxError", function () {
+                    $("html").removeClass("progress");
+                    $("#overlay").css("display", "none");
+                });
+                function do_nothing() {
+                    return false;
+                }
+            </script>
+            <style>
+
+            </style>
+        </f:view>
+    </h:body>
+</html>
+
+

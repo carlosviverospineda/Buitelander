@@ -1,0 +1,19 @@
+.big-table table {
+    width:inherit!important;
+}
+
+.ui-datatable-resizable tbody td {
+    word-break: break-word;
+    white-space: inherit!important;
+}
+
+.ui-state-highlight .ui-icon {
+    background-image: url("/savia/javax.faces.resource/images/ui-icons_333333_256x240.png.faces?ln=primefaces-bootstrap");
+}
+
+.ui-fileupload-filename {
+    display: block!important;
+    word-break: inherit!important;
+    word-wrap: inherit!important; 
+    width: 100%!important;
+}

@@ -1,0 +1,188 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <h:outputStylesheet name="css/default.css"/>
+            <h:outputStylesheet name="css/cssLayout.css"/>
+            <h:outputStylesheet name="css/inicio.css"/>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link rel="icon" type="image/x-icon" href="/savia/resources/images/icono.png"/>
+            <title>Bienvenido</title>
+        </f:facet>
+    </h:head>
+    <p:growl id="mensajeGeneral" showSummary="false" showDetail="true" sticky="false">
+        <p:autoUpdate />
+    </p:growl>
+    <h:body style=" background-color: #FFFFFF; background-size: 100%; ">
+        <f:view>
+            <h:form id="login">
+                <div style="bottom:10px; width:100%;" align="right">
+                    <p:commandLink onclick="PrimeFaces.monitorDownload();" immediate="true" ajax="false" title="Ayuda" rendered="#{loginBean.mostrarIcono}">
+                        <p:graphicImage value="/resources/images/ayuda.png" />
+                        <p:fileDownload value="#{loginBean.generarManual()}" />
+                    </p:commandLink>
+                </div>
+                <div class="cajaIngreso" style="position:relative; opacity: 0.95;">
+                    <div align="center">
+                        <div style="padding-top: 30px;">
+                            <h:graphicImage value="/resources/images/acc_empresa.png"/>
+                        </div>
+                        <div style="position:static; padding-top: 20px; color: #000000; font-size: 12px; width: 300px;">                            
+                            Sistema de información
+                        </div>
+                        <div align="center" style="position:static; width: 260px;">
+                            <div style="padding-top: 40px;">
+                                <div style="float: right; padding-left: 10px;">
+                                    <p:inputText id="usuario" label="Usuario" required="true" value="#{loginBean.objeto.usuario.usuario}" style="width: 160px;" maxlength="12">
+                                        <f:validateLength minimum="4" maximum="12" />
+                                    </p:inputText>
+                                </div>
+                                <div style="float: right;">
+                                    <!--<p:graphicImage styleClass="ui-icon ui-icon-person"/>-->
+                                    <h:graphicImage value="/resources/images/ico_usuario.png" title="Usuario"/>
+                                </div>
+                            </div>
+                            <div style="padding-top: 40px;">
+                                <div style="float: right; padding-left: 10px;">
+                                    <p:password id="contrasena" label="Contraseña" required="true" value="#{loginBean.objeto.usuario.contrasena}" style="width: 160px;" maxlength="16">
+                                        <f:validateLength minimum="5" maximum="16" />
+                                    </p:password>
+                                </div>
+                                <div style="float: right;">
+                                    <!--<p:graphicImage styleClass="ui-icon ui-icon-key"/>-->
+                                    <h:graphicImage value="/resources/images/ico_contrasena.png" title="Contraseña"/>
+                                </div>
+                            </div>
+                            <div style="padding-top: 50px;">
+                                <p:commandButton value="Ingresar" action="#{loginBean.validarConexion}" icon="ui-icon-circle-check" oncomplete="sessionStorage.clear();"/>
+                            </div>
+                            <div style="padding-top: 25px;">
+                                <p:commandLink action="#{loginBean.restaurarEditar}" immediate="true" > Recordar Contraseña </p:commandLink>  
+                            </div>                            
+                        </div>
+                        <div style="padding-right: 10px;" align="right">
+                            Ver. #{loginBean.moduloVersion.version} (#{loginBean.moduloVersion.fechaVersion})
+                        </div>
+                    </div>
+                </div>
+                <div style="position:absolute; bottom:10px; width:100%; right: 10px;">
+
+                </div>
+            </h:form>
+            <p:dialog header="Restaurar Contraseña" widgetVar="dialogoEditar" appendTo="@(body)" modal="true">
+                <h:form id="frmEditar">
+                    <h:panelGrid id="panelEditar" columns="1" style="width: 400px; text-align: center;">
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <h:graphicImage value="/resources/images/logo_aplicacion.png"/>
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <p:outputLabel value="Ingrese el Usuario para Restablecer Contraseña"></p:outputLabel>
+                        <h:panelGroup>
+                            <h:graphicImage value="/resources/images/ico_usuario.png" title="Usuario"/>
+                            <p:inputText id="usuarioEmail" label="Usuario" required="true" value="#{loginBean.objeto.usuario.usuario}" style="width: 130px; margin-left: 10px;" maxlength="16">
+                                <f:validateLength minimum="1" maximum="16" />
+                            </p:inputText>
+                        </h:panelGroup>
+                        <h:panelGroup style="margin-top: 40px;">&nbsp;</h:panelGroup>
+                        <f:facet name="footer">
+                            <p:commandButton value="Restaurar" type="button" validateClient="true" onclick="restaurarRemote()"/>
+                            <p:remoteCommand name="restaurarRemote" update="panelEditar" action="#{loginBean.restaurarModificar}" />
+                            <p:commandButton style="margin-left: 10px;" value="Cancelar" type="button" onclick="PF('dialogoEditar').hide();"/>
+                        </f:facet>
+                        <h:panelGroup style="margin-bottom: 40px;">&nbsp;</h:panelGroup>
+                    </h:panelGrid>
+                </h:form>
+            </p:dialog>          
+        </f:view>
+        <script>
+<!--TODO: add event, xhr, options> -->
+            $(document).on("ajaxStart pfAjaxSend", function () {
+                $("html").addClass("progress");
+                $("#overlay").css("display", "block");
+            }).on("ajaxStop pfAjaxComplete", function () {
+                $("html").removeClass("progress");
+                $("#overlay").css("display", "none");
+            });
+            function do_nothing() {
+                return false;
+            }
+
+            </script>
+            <style>
+            .loader {
+                margin: auto;
+                font-size: 7px;
+                width: 1em;
+                height: 1em;
+                border-radius: 50%;
+                position: relative;
+                text-indent: -9999em;
+                -webkit-animation: load5 1.1s infinite ease;
+                animation: load5 1.1s infinite ease;
+                -webkit-transform: translateZ(0);
+                -ms-transform: translateZ(0);
+                transform: translateZ(0);
+                top: 50%;
+                margin-top: -100px;
+            }
+            @-webkit-keyframes load5 {
+                0%,
+                100% {
+                    box-shadow: 0em -2.6em 0em 0em #ffffff, 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.5), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7);
+                }
+                12.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.7), 1.8em -1.8em 0 0em #ffffff, 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5);
+                }
+                25% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.5), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7), 2.5em 0em 0 0em #ffffff, 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                37.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5), 2.5em 0em 0 0em rgba(255, 255, 255, 0.7), 1.75em 1.75em 0 0em #ffffff, 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                50% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.5), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.7), 0em 2.5em 0 0em #ffffff, -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                62.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.5), 0em 2.5em 0 0em rgba(255, 255, 255, 0.7), -1.8em 1.8em 0 0em #ffffff, -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                75% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.5), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.7), -2.6em 0em 0 0em #ffffff, -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                87.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.5), -2.6em 0em 0 0em rgba(255, 255, 255, 0.7), -1.8em -1.8em 0 0em #ffffff;
+                }
+            }
+            @keyframes load5 {
+                0%,
+                100% {
+                    box-shadow: 0em -2.6em 0em 0em #ffffff, 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.5), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7);
+                }
+                12.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.7), 1.8em -1.8em 0 0em #ffffff, 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5);
+                }
+                25% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.5), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.7), 2.5em 0em 0 0em #ffffff, 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                37.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.5), 2.5em 0em 0 0em rgba(255, 255, 255, 0.7), 1.75em 1.75em 0 0em #ffffff, 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                50% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.5), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.7), 0em 2.5em 0 0em #ffffff, -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.2), -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                62.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.5), 0em 2.5em 0 0em rgba(255, 255, 255, 0.7), -1.8em 1.8em 0 0em #ffffff, -2.6em 0em 0 0em rgba(255, 255, 255, 0.2), -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                75% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.5), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.7), -2.6em 0em 0 0em #ffffff, -1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2);
+                }
+                87.5% {
+                    box-shadow: 0em -2.6em 0em 0em rgba(255, 255, 255, 0.2), 1.8em -1.8em 0 0em rgba(255, 255, 255, 0.2), 2.5em 0em 0 0em rgba(255, 255, 255, 0.2), 1.75em 1.75em 0 0em rgba(255, 255, 255, 0.2), 0em 2.5em 0 0em rgba(255, 255, 255, 0.2), -1.8em 1.8em 0 0em rgba(255, 255, 255, 0.5), -2.6em 0em 0 0em rgba(255, 255, 255, 0.7), -1.8em -1.8em 0 0em #ffffff;
+                }
+            }
+            </style>
+    </h:body>
+</html>
+

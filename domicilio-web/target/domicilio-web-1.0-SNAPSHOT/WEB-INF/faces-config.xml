@@ -1,0 +1,195 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<faces-config version="2.2"
+              xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd">
+
+    <application>
+        <locale-config>
+            <supported-locale>es_ES</supported-locale>
+        </locale-config>
+        <el-resolver>
+            org.springframework.web.jsf.el.SpringBeanFacesELResolver
+        </el-resolver>
+    </application>
+    
+    <managed-bean>
+        <managed-bean-name>loginBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.conexion.bean.LoginBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>conexionServicio</property-name>
+            <value>#{conexionServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>homeBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.conexion.bean.HomeBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>request</managed-bean-scope>
+        <managed-property>
+            <property-name>conexionServicio</property-name>
+            <value>#{conexionServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>contrasenaBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.conexion.bean.ContrasenaBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>conexionServicio</property-name>
+            <value>#{conexionServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>empresaBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.EmpresaBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>empresaServicio</property-name>
+            <value>#{empresaServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>logBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.LogBean</managed-bean-class>
+        
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>logServicio</property-name>
+            <value>#{logServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>maestroTipoBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.MaestroTipoBean</managed-bean-class>
+        
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>maestroTipoServicio</property-name>
+            <value>#{maestroTipoServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>maestroBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.MaestroBean</managed-bean-class>
+        
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>maestroServicio</property-name>
+            <value>#{maestroServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>moduloBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.ModuloBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>moduloServicio</property-name>
+            <value>#{moduloServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>perfilBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.PerfilBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>perfilServicio</property-name>
+            <value>#{perfilServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>usuarioBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.UsuarioBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>usuarioServicio</property-name>
+            <value>#{usuarioServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>calendarioBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.CalendarioBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>calendarioServicio</property-name>
+            <value>#{calendarioServicio}</value>
+        </managed-property>
+    </managed-bean>
+        
+    <managed-bean>
+        <managed-bean-name>rolBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.RolBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>rolServicio</property-name>
+            <value>#{rolServicio}</value>
+        </managed-property>
+    </managed-bean>
+    
+    <managed-bean>
+        <managed-bean-name>ubicacionBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.UbicacionBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>ubicacionServicio</property-name>
+            <value>#{ubicacionServicio}</value>
+        </managed-property>
+    </managed-bean>
+ 
+    <managed-bean>
+        <managed-bean-name>gnConfiguracionBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.administracion.bean.GnConfiguracionBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>gnConfiguracionServicio</property-name>
+            <value>#{gnConfiguracionServicio}</value>
+        </managed-property>
+    </managed-bean>
+        
+        
+    <managed-bean>
+        <managed-bean-name>ordenBean</managed-bean-name>
+        <managed-bean-class>com.domiciliosenvia.domicilio.web.financiero.bean.OrdenBean</managed-bean-class>
+    
+    
+        <managed-bean-scope>view</managed-bean-scope>
+        <managed-property>
+            <property-name>ordenServicio</property-name>
+            <value>#{ordenServicio}</value>
+        </managed-property>
+    </managed-bean>
+
+
+</faces-config>

@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans 
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.0.xsd">
+    <!--SERVICES-->
+    <bean id="conexionServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.ConexionServicioImpl">
+    </bean>
+     
+    <bean id="logServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.LogServicioImpl">
+    </bean>
+    
+    <bean id="maestroTipoServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.MaestroTipoServicioImpl">
+    </bean>
+    
+    <bean id="maestroServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.MaestroServicioImpl">
+    </bean>
+    
+    <bean id="moduloServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.ModuloServicioImpl">
+    </bean>
+    
+    <bean id="perfilServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.PerfilServicioImpl">
+    </bean>
+    
+    <bean id="ubicacionServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.UbicacionServicioImpl">
+    </bean>
+    
+    <bean id="usuarioServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.UsuarioServicioImpl">
+    </bean>
+    
+    <bean id="calendarioServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.CalendarioServicioImpl">
+    </bean>
+    
+    <bean id="rolServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.RolServicioImpl">
+    </bean>
+
+    <bean id="gnConfiguracionServicio" class="com.domiciliosenvia.domicilio.web.administracion.servicio.GnConfiguracionServicioImpl">
+    </bean>
+
+    <bean id="ordenServicio" class="com.domiciliosenvia.domicilio.web.financiero.servicio.OrdenServicioImpl">
+    </bean>
+</beans>

@@ -1,0 +1,365 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<ui:composition template="/home.xhtml"
+                xmlns="http://www.w3.org/1999/xhtml"
+                xmlns:h="http://java.sun.com/jsf/html"
+                xmlns:f="http://java.sun.com/jsf/core"
+                xmlns:ui="http://java.sun.com/jsf/facelets"
+                xmlns:p="http://primefaces.org/ui">
+    <ui:define name="bodyJR">
+        <center>
+            <h:form id="frmMaestros">
+                <p:toolbar>
+                    <f:facet name="left" >
+                        <span title="#{maestroBean.modulo.descripcion}">#{maestroBean.modulo.nombre}</span>
+                    </f:facet>
+                    <f:facet name="right">
+                        <p:commandButton rendered="#{maestroBean.accionListar}" title="Refrescar" ajax="false" actionListener="#{maestroBean.refrescar()}" icon="ui-icon-refresh"/>
+                        <p:commandButton rendered="#{maestroBean.accionCrear}" title="Crear" actionListener="#{maestroBean.crear()}" icon="ui-icon-document"/>
+                    </f:facet>
+                </p:toolbar>
+                <p:dataTable id="tablaRegistros" widgetVar="tablaWidget" var="obj" value="#{maestroBean.lazyMaestro}" rowKey="#{obj.id}"
+                             rows="#{maestroBean.tamanoPagina}" paginator="true" lazy="true" reflow="true"
+                             currentPageReportTemplate="Registros del {startRecord} al {endRecord} de {totalRecords}, Página {currentPage} de {totalPages}"
+                             paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+                             rowsPerPageTemplate="5,10,30,50,100" 
+                             emptyMessage="No se encontraron registros">
+                    <p:column headerText="Tipo" filterBy="#{obj.maestroTipo.tipo}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaWidget').filter()" filter="true" filterMatchMode="contains" style="width: 90%;">
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItems value="#{maestroBean.listaTipoMaestros}" var="tipo" itemValue="#{tipo.tipo}"  itemLabel="#{tipo.nombre}" itemDescription="#{tipo.nombre}"/>
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.maestroTipo.nombre}"/>
+                    </p:column>
+                    <p:column headerText="Nombre" filterBy="#{obj.nombre}">
+                        <f:facet name="filter">
+                            <p:inputText label="Nombre" maxlength="128" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.nombre}" title="#{obj.descripcion}"/>
+                    </p:column>
+                    <p:column headerText="Valor" filterBy="#{obj.valor}">
+                        <f:facet name="filter">
+                            <p:inputText label="Valor" maxlength="8" style="width: 95%;" onchange="PF('tablaWidget').filter()"/>
+                        </f:facet>
+                        <h:outputText value="#{obj.valor}" title="#{obj.valor}"/>
+                    </p:column>
+                    <p:column headerText="Activo" filterBy="#{obj.activo}">
+                        <f:facet name="filter">
+                            <p:selectOneMenu onchange="PF('tablaWidget').filter()" >
+                                <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                <f:selectItem itemLabel="SI" itemValue="true" />
+                                <f:selectItem itemLabel="NO" itemValue="false" />
+                            </p:selectOneMenu>
+                        </f:facet>
+                        <h:outputText value="#{obj.activoStr}"/>
+                    </p:column>
+                    <p:column headerText="F.H. Crea" sortBy="#{obj.fechaHoraCrea}">                        
+                        <h:outputText value="#{obj.fechaHoraCrea}">
+                            <f:convertDateTime type="date" pattern="yyyy-MM-dd HH:mm:ss" timeZone="America/Bogota"/>
+                        </h:outputText>
+                    </p:column>
+                    <p:column style="text-align: center;">
+                        <f:facet name="header">
+                            <h:outputText value="Acciones"/>
+                        </f:facet>    
+                        <p:commandButton rendered="#{maestroBean.accionVer}" title="Ver" actionListener="#{maestroBean.ver(obj.id)}" icon="ui-icon-search"/>
+                        <p:commandButton rendered="#{maestroBean.accionEditar}" title="Editar" actionListener="#{maestroBean.editar(obj.id)}" icon="ui-icon-pencil"/>
+                        <p:commandButton rendered="#{maestroBean.accionBorrar}" title="Borrar" action="#{maestroBean.borrar(obj.id)}" icon="ui-icon-trash">
+                            <p:confirm header="Confirmación" message="Está seguro que desea eliminar?" icon="ui-icon-alert" />
+                        </p:commandButton>
+                    </p:column>
+                </p:dataTable>
+                <p:confirmDialog global="true" showEffect="fade" hideEffect="fade">
+                    <p:commandButton value="Si" type="button" styleClass="ui-confirmdialog-yes" icon="ui-icon-check" style="left:25%"/>
+                    <p:commandButton value="No" type="button" styleClass="ui-confirmdialog-no" icon="ui-icon-close" style="left:25%"/>
+                </p:confirmDialog>
+            </h:form>
+
+            <p:dialog header="Ver" widgetVar="dialogoVer" appendTo="@(body)" modal="true">
+                <h:form class="frmAuditoria" style="margin-top: -15px; text-align: right;">
+                    <p:commandButton id="auditoria" class="btnAuditoria" action="#{maestroBean.getAuditoria(maestroBean.objeto.auditoriaStrHTML)}" icon="ui-icon-comment" title="Auditoría" />
+                </h:form>
+                <h:form id="frmVer">
+                    <p:panelGrid id="panelVer" style="width: 540px;">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Tipo" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.maestroTipo.tipo}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Nombre" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.nombre}" title="#{maestroBean.objeto.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Valor" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.valor}" title="#{maestroBean.objeto.valor}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Dependiencia"/>
+                            </p:column>
+                            <p:column>
+                                <div class="card">
+                                    <p:dataTable var="maestroTipo" value="#{maestroBean.listaMaestroTipoRelacion}" style="width: 500px" >
+                                        <p:column headerText="Tipo id" style=" width: 20px " >
+                                            <p:outputLabel value="#{maestroTipo.maestroTipoPadre.tipo}"/>
+                                        </p:column>
+                                        <p:column headerText="Tipo Maestros Padre" style=" width: 100px " >
+                                            <p:outputLabel value="#{ maestroTipo.maestroTipoPadre.nombre}"/>
+                                        </p:column>
+                                        <p:column headerText="Maestros Padre" style=" width: 100px " >
+                                            <ul>
+                                                <ui:repeat value="#{maestroTipo.maestros}" var="item">
+                                                    <li><h:outputText value="#{item.nombre}"/></li>
+                                                </ui:repeat>
+                                            </ul>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Accion"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.maestroAccion.nombre}" title="#{maestroBean.objeto.maestroAccion.descripcion}"/>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Activo" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.activoStr}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Descripción" />
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.descripcion}" />
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="4" style="text-align: center">
+                                    <p:commandButton value="Salir" type="button" onclick="PF('dialogoVer').hide()" immediate="true"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+
+            <p:dialog header="Crear" widgetVar="dialogoCrear" appendTo="@(body)" modal="true">
+                <h:form id="frmCrear">
+                    <p:panelGrid id="panelCrear">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Tipo" for="tipo"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneMenu id="tipo" label="Tipo" value="#{maestroBean.objeto.maestroTipo.tipo}" filter="true" filterMatchMode="contains" required="true" editable="fase">
+                                    <p:ajax event="change" listener="#{maestroBean.listarDependencias}" update="tipoPadre, dependenciaLabel, accion" />
+                                    <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                    <f:selectItems value="#{maestroBean.listaTipoMaestros}" var="tipo" itemValue="#{tipo.tipo}"  itemLabel="#{tipo.nombre}" itemDescription="#{tipo.nombre}"/>
+                                </p:selectOneMenu>                                
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Nombre" for="nombre"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="nombre" label="Nombre" value="#{maestroBean.objeto.nombre}" size="60" maxlength="128" required="true">
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Valor" for="valor"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="valor" label="Valor" value="#{maestroBean.objeto.valor}" size="16" maxlength="8" required="false">
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel id="dependenciaLabel" value="Dependiencia" for="tipoPadre"/>
+                            </p:column>
+                            <p:column colspan="3">
+                                <p:selectCheckboxMenu style="width: 250px;" id="tipoPadre" value="#{maestroBean.selectedMaestrosPadres}" label="Perfiles" 
+                                                      filter="true" filterMatchMode="contains" panelStyle="width:250px" >
+                                    <f:selectItems value="#{maestroBean.listaMaestroTiposPadre}" var="padre" itemValue="#{padre.tipo}"  itemLabel="#{padre.nombre}" itemDescription="#{padre.nombre}"   />
+                                </p:selectCheckboxMenu>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Accion" for="accion"/>
+                            </p:column>
+                            <p:column>                                
+                                <p:selectOneMenu id="accion" label="Acción" value="#{maestroBean.objeto.maestroAccion.id}" filter="true" filterMatchMode="contains" editable="fase">
+                                    <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />    
+                                    <f:selectItems value="#{maestroBean.listaAcciones}"  var="acc" itemValue="#{acc.id}" itemLabel="#{acc.nombre}" itemDescription="#{acc.descripcion}"/>
+                                </p:selectOneMenu>                                  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Activo" for="activo"/>
+                            </p:column>
+                            <p:column>
+                                <p:selectOneRadio id="activo" value="#{maestroBean.objeto.activo}">
+                                    <f:selectItem itemLabel="Si" itemValue="true" />
+                                    <f:selectItem itemLabel="No" itemValue="false" />
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Descripción" for="descripcion"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputTextarea id="descripcion" label="Descripción" value="#{maestroBean.objeto.descripcion}" cols="50" maxlength="512"/>
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="4" style="text-align: center">
+                                    <p:commandButton value="Guardar" type="button" onclick="guardarRemote()" validateClient="true"/>
+                                    <p:remoteCommand name="guardarRemote" action ="#{maestroBean.guardar}" update="panelCrear"/>
+                                    <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoCrear').hide()" immediate="true" style="margin-left: 5px;"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+
+            <p:dialog header="Editar" widgetVar="dialogoEditar" appendTo="@(body)" modal="true" >
+                <h:form class="frmAuditoria" style="margin-top: -15px; text-align: right;">
+                    <p:commandButton id="auditoria" class="btnAuditoria" action="#{maestroBean.getAuditoria(maestroBean.objeto.auditoriaStrHTML)}" icon="ui-icon-comment" title="Auditoría" />
+                </h:form>
+                <h:form id="frmEditar">
+                    <p:panelGrid id="panelEditar">
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Tipo"/>
+                            </p:column>
+                            <p:column>
+                                <h:outputText value="#{maestroBean.objeto.maestroTipo.tipo}" />
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Nombre" for="nombre"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="nombre" label="Nombre" value="#{maestroBean.objeto.nombre}" size="60" maxlength="128" required="true">
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Valor" for="valor"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputText id="valor" label="Valor" value="#{maestroBean.objeto.valor}" size="16" maxlength="8" required="false">
+                                </p:inputText>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Dependiencia"/>
+                            </p:column>
+                            <p:column>
+                                <div class="card">
+                                    <p:dataTable var="maestroTipo" value="#{maestroBean.listaMaestroTipoRelacion}" style="width: 500px" 
+                                                  editable="true" widgetVar="tablaPermisosWidget" >
+                                        <p:ajax event="rowEdit" listener="#{perfilBean.modificarPermiso}"/>
+                                        
+                                        <p:column headerText="Tipo Padre" style="width:100px">
+                                            <p:cellEditor>
+                                                <f:facet name="output">
+                                                    <h:outputText value="#{maestroTipo.maestroTipoPadre.tipo} (#{maestroTipo.maestroTipoPadre.nombre})" title="#{maestroTipo.maestroTipoPadre.nombre}"/>
+                                                </f:facet>
+                                                <f:facet name="input">
+                                                    <h:outputText value="#{maestroTipo.maestroTipoPadre.tipo} (#{maestroTipo.maestroTipoPadre.nombre})" title="#{maestroTipo.maestroTipoPadre.nombre}"/>
+                                                </f:facet>
+                                            </p:cellEditor>
+                                        </p:column>
+                                        <p:column headerText="Maestros Padre" style=" width: 100px " >
+                                            <p:selectCheckboxMenu style="width: 250px;" id="tipoHijos" value="#{maestroTipo.seleccion}" label="Maestros"
+                                                                  filter="true" filterMatchMode="contains" panelStyle="width:250px" converter="javax.faces.Integer">
+                                                <f:selectItems value="#{maestroTipo.maestros}" var="maestro" itemValue="#{maestro.id}" 
+                                                               itemLabel="#{maestro.nombre}" itemDescription="#{maestro.descripcion}"   />
+                                            </p:selectCheckboxMenu>
+                                        </p:column>
+                                    </p:dataTable>
+                                </div>
+                            </p:column>
+                        </p:row>  
+                        
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                    <p:outputLabel value="Accion" for="accion"/>
+                            </p:column>
+                            <p:column>                                
+                                <p:selectOneMenu id="accion" label="Acción" value="#{maestroBean.objeto.maestroAccion.id}" filter="true" filterMatchMode="contains" editable="fase">
+                                    <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />    
+                                    <f:selectItems value="#{maestroBean.listaAcciones}"  var="acc" itemValue="#{acc.id}" itemLabel="#{acc.nombre}" itemDescription="#{acc.descripcion}"/>
+                                </p:selectOneMenu>                                  
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Activo" for="activo"/>
+                            </p:column>
+                            <p:column>                                
+                                <p:selectOneRadio id="activo" value="#{maestroBean.objeto.activo}">
+                                    <f:selectItem itemLabel="Si" itemValue="true" />
+                                    <f:selectItem itemLabel="No" itemValue="false" />
+                                </p:selectOneRadio>
+                            </p:column>
+                        </p:row>
+                        <p:row>
+                            <p:column styleClass="ui-widget-header">
+                                <p:outputLabel value="Descripcion" for="descripcion"/>
+                            </p:column>
+                            <p:column>
+                                <p:inputTextarea id="descripcion" label="Agrupación" value="#{maestroBean.objeto.descripcion}" cols="50" maxlength="512"/>
+                            </p:column>
+                        </p:row>
+                        <f:facet name="footer">
+                            <p:row>
+                                <p:column colspan="4" style="text-align: center">
+                                    <p:commandButton value="Modificar" type="button" onclick="modificarRemote()" validateClient="true"/>
+                                    <p:remoteCommand name="modificarRemote" action="#{maestroBean.modificar}" update="panelEditar" />
+                                    <p:commandButton value="Cancelar" type="button" onclick="PF('dialogoEditar').hide()" immediate="true" style="margin-left: 5px;"/>
+                                </p:column>
+                            </p:row>
+                        </f:facet>
+                    </p:panelGrid>
+                </h:form>
+            </p:dialog>
+        </center>
+    </ui:define>
+</ui:composition>

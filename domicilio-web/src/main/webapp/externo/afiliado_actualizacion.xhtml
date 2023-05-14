@@ -1,0 +1,452 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <f:facet name="first">
+            <h:outputStylesheet name="css/default.css"/>
+            <h:outputStylesheet name="css/cssLayout.css"/>
+            <h:outputStylesheet name="css/inicio.css"/>
+            <meta content='text/html; charset=UTF-8' http-equiv="Content-Type"/>
+            <link rel="icon" type="image/x-icon" href="/intrasavia/resources/images/icono.png"/>
+            <title>Conexiones - Actualizacion Afiliado</title>
+        </f:facet>
+        <style type="text/css">
+            #mensaje{
+                background:transparent;
+                color:inherit;
+                border:0;
+                outline:0;
+            }
+            #frmBusquedaAfiliado .ui-toolbar.ui-widget-header, 
+            #frmAfiliadoActualizacion .ui-toolbar.ui-widget-header,
+            #toolbarTituloModulo.ui-toolbar.ui-widget-header{
+                background-color: #99D1C7 !important;
+                background-image: none !important;
+            }
+
+            #frmBusquedaAfiliado .ui-button, 
+            #frmAfiliadoActualizacion .ui-button {
+                background: #04997C !important;
+                color: white;
+            }
+            .ui-selectonemenu-items-wrapper,
+            .ui-autocomplete-panel
+            {
+                width:350px !important;
+            } 
+            
+            
+            .ui-autocomplete-panel .ui-autocomplete-list
+            {
+                overflow: auto !important;
+                height: 200px !important;
+            }
+        </style>
+        <script>
+          $(function(){
+            var input_mensaje = $('#mensaje');
+            var mensaje = input_mensaje.val();
+            var oculto = mensaje.replace(/./g,'*');
+            input_mensaje.select(function(){
+              $(this).val(mensaje);
+            }).val(oculto).focusout(function(){
+              $(this).val(oculto);
+            });  
+          });  
+        </script>
+    </h:head>
+    <p:growl id="mensajeGeneral" showSummary="false" showDetail="true" sticky="false">
+        <p:autoUpdate />
+    </p:growl>
+    <h:body style=" background-color: #FFFFFF; background-size: 100%; ">
+        <f:view>
+               <p:toolbar id="toolbarTituloModulo">
+                     <f:facet id="tituloSeccion" name="left">
+                        <span title="Funcionalidad que permite actualizar afiliado">Actualización Afiliado </span> 
+                    </f:facet>
+                </p:toolbar>
+                <p:ajaxStatus onstart="PF('statusDialog').show()" onsuccess="PF('statusDialog').hide()" />
+                <p:dialog widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+                    <p:graphicImage name="images/ajax-loader.gif" />
+                </p:dialog>
+                <p:panelGrid id="panelActualizacionDatosAfiliado" style="width: 80%;" >   
+                    <p:panelGrid id="panelDatosLogo" style="width: 100%;" class="ui-fluid">                   
+                        <p:row>
+                            <p:column  style="text-align: left" >
+                                <div style="padding: 2px 0 0 5px;">
+                                    <h:graphicImage value="/resources/images/logo_actualiza_datos.png" style="height: 150px; width: 150px" title="Actualización Afiliado" />
+                                </div>
+                            </p:column>
+                        </p:row>
+                    </p:panelGrid>
+                    
+                    <h:form id="frmBusquedaAfiliado">
+                        
+                        <p:panelGrid id="panelDatosBusquedaAfiliado" style="width: 100%;" class="ui-fluid">   
+                            <p:remoteCommand name="abrirDireccion" action ="#{afiliadoActualizacionBean.crearDireccion()}" />     
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Tipo de Identificación" for="tipodocumento"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:selectOneMenu id="tipodocumento" value="#{afiliadoActualizacionBean.objeto.maeTipoDocumento}" label="Tipos Identificación"   effect="fold" editable="false" required="true" requiredMessage="Tipos Identificación : Este campo es obligatorio.">
+                                        <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                        <f:selectItems value="#{afiliadoActualizacionBean.listaTiposDocumento}" var="tipoDocumento" itemValue="#{tipoDocumento.id}" itemLabel="#{tipoDocumento.nombre}" itemDescription="#{tipoDocumento.descripcion}" />
+                                    </p:selectOneMenu>
+                                </p:column>
+                                <p:column >
+                                    <p:outputLabel value="Número Identificación" for="numeroIdentificacion"/>
+                                </p:column>
+                                <p:column  styleClass="ui-widget-header">
+                                    <p:inputText value="#{afiliadoActualizacionBean.objeto.numeroDocumento}" label="Número Identificación" id="numeroIdentificacion" maxlength="64" required="true" requiredMessage="Número Identificación : Este campo es obligatorio."/>
+                                </p:column>
+                                <p:column>
+                                    <p:outputLabel value="Fecha Nacimiento" for="fechaNacimiento"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:calendar value="#{afiliadoActualizacionBean.objeto.fechaNacimiento}" id="fechaNacimiento" label="Fecha Nacimiento" navigator="true" pattern="yyyy-MM-dd" yearRange="c-100:c" 
+                                                size="30" maxlength="30" required="true" requiredMessage="Fecha Nacimiento : Este campo es obligatorio.">
+                                    </p:calendar>
+                                </p:column>
+                            </p:row>
+                        </p:panelGrid>
+
+                        <p:panelGrid id="panelDatosBusquedaAfiliadoBotones" style="width: 100%;">
+                            <p:row>
+                                <p:column colspan="7" style="text-align: center">
+                                    <p:commandButton  update="frmAfiliadoActualizacion" ajax="false" actionListener="#{afiliadoActualizacionBean.buscarAfiliadoServicio}" value="Buscar"/>       
+                                    <p:commandButton  update="frmAfiliadoActualizacion" value="Cancelar" immediate="true" style="margin-left: 5px;" actionListener="#{afiliadoActualizacionBean.limpiarFormularioBusqueda()}" />
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>
+                    </h:form>
+                    <h:form id="frmAfiliadoActualizacion">  
+                        <p:panelGrid id="panelDatosEncontradosAfiliado" style="margin-top: 20px; width: 100%;" rendered="#{afiliadoActualizacionBean.habilitarSeccionResultados}">
+                            
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 127px;" >
+                                        <p:outputLabel value="Tipo documento"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.obtenerTipoDocumentoPersona(afiliadoActualizacionBean.objeto.maeTipoDocumento)}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" style="width: 127px;">
+                                        <p:outputLabel value="Número documento" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.numeroDocumento}" style="width: 181px;"/>
+                                    </p:column>                                    
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Primer Nombre" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.primerNombre}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Segundo Nombre" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.segundoNombre}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Primer Apellido" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.primerApellido}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Segundo Apellido" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.segundoApellido}"/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 127px;">
+                                        <p:outputLabel value="Sexo" />
+                                    </p:column>
+                                    <p:column>
+                                        <h:outputText value="#{afiliadoActualizacionBean.obtenerTipoGenero(afiliadoActualizacionBean.objeto.genero)}"/>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Municipio Afiliación" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:outputLabel value="#{afiliadoActualizacionBean.objeto.residenciaUbicacion.nombre}"/>
+                                    </p:column>
+                                </p:row>     
+                        </p:panelGrid>
+                        <p:spacer></p:spacer>
+                        <p:panel id="pnlAnexo1" header="Actualice sus datos aqui" style="margin:10px 0px" toggleable="false"  rendered="#{afiliadoActualizacionBean.habilitarSeccionResultados}">
+                            <p:panelGrid id="panelAnexo1" style="width:100%;margin:10px 0px">
+                                
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" style="width: 127px;">
+                                        <p:outputLabel value="Tipo Documento" for="tipoDocumento" />
+                                    </p:column> 
+                                    <p:column>
+                                        <p:selectOneMenu id="tipoDocumento" value="#{afiliadoActualizacionBean.objetoAnexo1.tipoDocumentoNuevo}" required="true" requiredMessage="Tipo Documento: Este campo es obligatorio.">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.listaTiposDocumento}" var="tipoDocPer" itemValue="#{tipoDocPer.valor}" itemLabel="#{tipoDocPer.nombre}" itemDescription="#{tipoDocPer.descripcion}"/>
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Número Documento" for="numeroDocumento" />
+                                    </p:column> 
+                                    <p:column>
+                                        <p:inputText id="numeroDocumento" value="#{afiliadoActualizacionBean.objetoAnexo1.numeroDocumentoNuevo}" style="width: 94%;" maxlength="16" required="true" requiredMessage="Número Documento: Este campo es obligatorio.">
+                                            <p:keyFilter regEx="/[a-z0-9_]/i"/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Primer nombre" for="nombre1Nuevo"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="nombre1Nuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.nombre1Nuevo}" maxlength="64" required="true" requiredMessage="Primer Nombre: Este campo es obligatorio.">
+                                            <p:keyFilter regEx="/[0-9A-ZÀ-ÿ\s\/\(\)\-\_\+\*\&quot;\'\|\[\]\{\}\'\\\.\´]/i" />
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Segundo nombre" for="nombre2Nuevo" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="nombre2Nuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.nombre2Nuevo}" maxlength="64">
+                                                <p:keyFilter regEx="/[0-9A-ZÀ-ÿ\s\/\(\)\-\_\+\*\&quot;\'\|\[\]\{\}\'\\\.\´]/i" />
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Primer apellido" for="apellido1Nuevo"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="apellido1Nuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.apellido1Nuevo}"  maxlength="64" required="true" requiredMessage="Primer Apellido: Este campo es obligatorio.">
+                                                <p:keyFilter regEx="/[0-9A-ZÀ-ÿ\s\/\(\)\-\_\+\*\&quot;\'\|\[\]\{\}\'\\\.\´]/i" />
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Segundo apellido" for="apellido2Nuevo" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="apellido2Nuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.apellido2Nuevo}" maxlength="64">
+                                                <p:keyFilter regEx="/[0-9A-ZÀ-ÿ\s\/\(\)\-\_\+\*\&quot;\'\|\[\]\{\}\'\\\.\´]/i" />
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Fecha de Nacimiento" for="fechaNacimientoNuevo"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="fechaNacimientoNuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.fechaNacimientoNuevo}" style="width: 115px;" pattern="yyyy-MM-dd"  yearRange="c-100:c" type="localDate" navigator="true"  maxdate="#{afiliadoActualizacionBean.fechaMaximaCalendario}" required="true" requiredMessage="Fecha de Nacimiento: Este campo es obligatorio.">
+                                            <f:convertDateTime pattern="yyyy-MM-dd" type="both" timeZone="America/Bogota"/>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Sexo" for="sexoNuevo" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:selectOneMenu id="sexoNuevo" required="true" value="#{afiliadoActualizacionBean.objetoAnexo1.sexoNuevo}" 
+                                                     effect="fold" editable="fase" style="width: 170px;" requiredMessage="Sexo : Este campo es obligatorio.">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.listaTiposGenero}" var="TIPO_GENERO" itemValue="#{TIPO_GENERO.id}" itemLabel="#{TIPO_GENERO.nombre}" itemDescription="#{TIPO_GENERO.descripcion}" />
+                                        </p:selectOneMenu>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Fecha Expedición Cédula" for="fechaExpCedulaNuevo"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:calendar id="fechaExpCedulaNuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.fechaExpedicionCedulaNuevo}" style="width: 115px;" pattern="yyyy-MM-dd"  yearRange="c-100:c" type="localDate" navigator="true"  maxdate="#{afiliadoActualizacionBean.fechaMaximaCalendario}">
+                                            <f:convertDateTime pattern="yyyy-MM-dd" type="both" timeZone="America/Bogota"/>
+                                        </p:calendar>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Dirección" for="direccionNuevo" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="direccionNuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.direccionNuevo}" 
+                                                     readonly="true" onfocus="abrirDireccion()" 
+                                                     onclick="abrirDireccion()" maxlength="256"
+                                                     style="width: 94%;" required="true"  
+                                                     requiredMessage="Dirección : Este campo es obligatorio."/>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Teléfono Fijo" for="telefonoFijoNuevo"/>
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="telefonoFijoNuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.telefonoNuevo}" style="width: 94%;" maxlength="10">
+                                            <p:keyFilter regEx="/[0-9]/i"/>
+                                        </p:inputText>
+                                    </p:column>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Teléfono Móvil" for="celularNuevo" />
+                                    </p:column>
+                                    <p:column>
+                                        <p:inputText id="celularNuevo" value="#{afiliadoActualizacionBean.objetoAnexo1.celularNuevo}" style="width: 94%;" maxlength="10">
+                                            <p:keyFilter regEx="/[0-9]/i"/>
+                                        </p:inputText>
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header" >
+                                        <p:outputLabel value="Observación" for="observacionNuevo"/>
+                                    </p:column>
+                                    <p:column colspan="3">
+                                        <p:inputTextarea id="observacionNuevo" rows="2" cols="125" 
+                                                         value="#{afiliadoActualizacionBean.objetoAnexo1.observacion}" 
+                                                         counter="display1Auditar" maxlength="512"  style="width: 94%;"
+                                                         counterTemplate="{0} caracteres faltantes." 
+                                                         autoResize="true" required="true" 
+                                                         requiredMessage="Observacion: Este campo es obligatorio"/>
+                                    <br/>
+                                    <h:outputText id="display1Auditar" />
+                                    </p:column>
+                                </p:row>
+                                <p:row>
+                                    <p:column styleClass="ui-widget-header">
+                                        <p:outputLabel value="Adjunte Archivos" for="adjuntoArchivo"/> 
+                                    </p:column>
+                                    <p:column>
+                                        <p:panelGrid>
+                                            <p:row>
+                                                <p:fileUpload id="adjuntoArchivo" label="Adjunto" mode="advanced"
+                                                              skinSimple="true"
+                                                              value="#{afiliadoActualizacionBean.archivoAdjunto}"
+                                                              listener="#{afiliadoActualizacionBean.cargarArchivoDocumento}"
+                                                              multiple="true"
+                                                              auto="true"
+                                                              invalidFileMessage="Tipo inválido de archivo"
+                                                              fileLimitMessage="Máximo número de archivos excedido."
+                                                              update="nombreDocumento cmdnombreDocumento"
+                                                              uploadLabel="Subir"  cancelLabel="Cancelar"
+                                                              sizeLimit="7000000" fileLimit="2" allowTypes="/(\.|\/)(pdf|PDF|jpe?g|doc|DOC|docx)$/"
+                                                              widgetVar="subirManual"/>
+                                            </p:row>
+                                            <p:row>
+                                                <p:outputLabel styleClass="texto-adjuntos" id="nombreDocumento" value="#{afiliadoActualizacionBean.nombreDocumento}"/>
+                                                <p:spacer width="10" height="0"/>
+                                                <p:commandButton id="cmdnombreDocumento" icon="ui-icon-close" action="#{afiliadoActualizacionBean.borrarArchivo()}"
+                                                                 style="#{afiliadoActualizacionBean.mostrarBorrarDocumento ?  'display: initial;' : 'display: none;'} width: 30px"
+                                                                 update="nombreDocumento cmdnombreDocumento adjuntoArchivo"  immediate="true" />
+                                            </p:row>
+                                        </p:panelGrid>
+                                    </p:column>
+                                </p:row>
+                            </p:panelGrid>
+                        </p:panel>
+                          
+                        <p:panelGrid id="panelDatosEditablesAfiliadoBotones" rendered="#{afiliadoActualizacionBean.habilitarSeccionResultados}" style="width: 100%;">
+                            <p:row>
+                                <p:column colspan="6" style="text-align: center">
+                                    <p:commandButton immediate="true" action="#{afiliadoActualizacionBean.limpiarFormulario()}" value="Limpiar" style="margin-left: 5px;"/>
+                                    <p:commandButton ajax="false" action="#{afiliadoActualizacionBean.guardarAfiliado()}"   value="Guardar" style="margin-left: 5px;" />
+                                </p:column>
+                            </p:row> 
+                        </p:panelGrid>
+                    </h:form>
+                    
+                </p:panelGrid>
+                <p:dialog header="Dirección" widgetVar="dialogoDireccion" appendTo="@(body)" modal="true" width="60%" dynamic="true">
+                <p:scrollPanel mode="native">
+                    <h:form id="frmDireccion">
+                        <p:panelGrid style="width: 100%;" id="contentPanelDireccion" >
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Dirección"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                        <p:selectOneMenu style="width:100px;" effect="fold" editable="false" value="#{afiliadoActualizacionBean.direccion.via}" required="true" >
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.direccion.mapVias.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                                            <p:ajax event="change" update="frmDireccion"/>
+                                        </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                        <p:inputText style="width: 30px;" value="#{afiliadoActualizacionBean.direccion.numero}" maxlength="3" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}"/>
+                                        </td>
+                                        <td>
+                                        <p:selectOneMenu style="width:50px;" value="#{afiliadoActualizacionBean.direccion.ord1}" effect="fold" editable="false" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.direccion.mapOrd.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                                        </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                        <p:selectOneMenu style="width:50px;" value="#{afiliadoActualizacionBean.direccion.orientacion1}" effect="fold" editable="false" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.direccion.mapOrientacion.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                                        </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                        <p:outputLabel value=" #"/>
+                                        </td>
+                                        <td>
+                                        <p:inputText style="width:30px;" value="#{afiliadoActualizacionBean.direccion.placa1}" maxlength="3" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}"/>
+                                        </td>
+                                        <td>
+                                        <p:selectOneMenu style="width:50px;" value="#{afiliadoActualizacionBean.direccion.ord2}" effect="fold" editable="false" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.direccion.mapOrd.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                                        </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                        <p:selectOneMenu style="width:50px;" value="#{afiliadoActualizacionBean.direccion.orientacion2}" effect="fold" editable="false" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}">
+                                            <f:selectItem itemLabel=" -- " itemValue="#{null}" noSelectionOption="true" />
+                                            <f:selectItems value="#{afiliadoActualizacionBean.direccion.mapOrientacion.entrySet()}" var="entry" itemValue="#{entry.key}" itemLabel="#{entry.value}" />
+                                        </p:selectOneMenu>
+                                        </td>
+                                        <td>
+                                        <p:outputLabel value=" - "/>
+                                        </td>
+                                        <td>
+                                        <p:inputText style="width:30px;" value="#{afiliadoActualizacionBean.direccion.placa2}" maxlength="3" disabled="#{afiliadoActualizacionBean.direccion.sinDireccion}"/>
+                                        </td>
+                                        </tr>                                        
+                                    </table>
+                                </p:column>
+                            </p:row>
+                            <p:row>
+                                <p:column>
+                                    <p:outputLabel value="Descripción"/>
+                                </p:column>
+                                <p:column styleClass="ui-widget-header">
+                                    <p:inputText value="#{afiliadoActualizacionBean.direccion.descripcion}" style="width: 90%;" label="Descripcion" maxlength="35" onkeypress="return noPuntuacion(event)"/>
+                                </p:column>
+                            </p:row>
+
+                            <f:facet name="footer" >
+                                <p:row>
+                                    <p:column colspan="8" style="text-align: center">
+                                        <h:panelGroup style="display:block; text-align:center; margin-top: 10px;">
+                                            <p:commandButton value="Actualizar" type="button" onclick="retornarDireccionRemote()" validateClient="true"/>
+                                            <p:remoteCommand name="retornarDireccionRemote" action ="#{afiliadoActualizacionBean.retornarDireccion()}" />
+                                            <p:commandButton value="Cerrar" type="button" onclick="PF('dialogoDireccion').hide()" immediate="true"/>
+                                        </h:panelGroup>
+                                    </p:column>
+                                </p:row>
+                            </f:facet>
+                        </p:panelGrid>
+                    </h:form>
+                    <h:form id="exit">
+                        <p:remoteCommand  id="limpiarRender" name="limpiarRender" action="#{afiliadoActualizacionBean.salir()}"/>
+                    </h:form>
+                </p:scrollPanel>
+            </p:dialog> 
+        </f:view>
+    </h:body>
+</html>
